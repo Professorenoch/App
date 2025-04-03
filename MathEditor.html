@@ -114,7 +114,7 @@
     function updatePreview() {
         let text = editor.innerText;
         text = text.replace(/\$(.*?)\$/g, (match, math) => {
-            return katex.renderToString(math, { throwOnError: false });
+            return `<span style="display: inline-block;">${katex.renderToString(math, { throwOnError: false })}</span>`;
         });
         preview.innerHTML = text.replace(/\n/g, '<br>');
         localStorage.setItem("editorContent", editor.innerText);
