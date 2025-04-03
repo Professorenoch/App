@@ -3,79 +3,71 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editor Matemático</title>
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/katex.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/katex.min.css">
     <style>
         body {
-            background-color: #121212;
+            background-color: black;
             color: white;
             font-family: Arial, sans-serif;
-            text-align: center;
             display: flex;
             flex-direction: column;
-            height: 100vh;
-            justify-content: space-between;
-            margin: 0;
-        }
-        #preview {
-            flex-grow: 1;
-            display: flex;
-            align-items: flex-start;
-            justify-content: flex-start;
-            font-size: 24px;
+            align-items: center;
             padding: 20px;
-            min-height: 50vh;
+        }
+        #editor-container {
+            width: 100%;
+            max-width: 400px;
+            background: #222;
+            padding: 10px;
+            border-radius: 10px;
+        }
+        #visualizador {
+            min-height: 150px;
+            background: black;
+            padding: 10px;
             white-space: pre-wrap;
             text-align: left;
         }
-        #editor {
-            width: 90%;
+        textarea {
+            width: 100%;
             height: 100px;
-            background: black;
+            background: #333;
             color: white;
-            font-size: 20px;
-            padding: 10px;
             border: none;
+            padding: 10px;
+            font-size: 16px;
             outline: none;
-            resize: none;
-            overflow-y: auto;
-            white-space: pre-wrap;
-            margin-bottom: 10px;
-            user-select: none;
-            pointer-events: none;
-            text-align: left;
         }
         .keyboard {
             display: grid;
             grid-template-columns: repeat(10, 1fr);
-            gap: 4px;
-            padding: 8px;
-            width: 100vw;
-            box-sizing: border-box;
+            gap: 5px;
+            padding: 10px;
+            max-width: 400px;
         }
         .key {
-            background: #444;
-            color: white;
-            padding: 12px 0;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 18px;
+            background: gray;
+            padding: 10px;
             text-align: center;
+            border-radius: 5px;
+            cursor: pointer;
         }
-        .space {
-            grid-column: span 5;
+        .key.special {
+            background: blue;
+            color: white;
         }
-        .enter {
-            background: #1976D2;
-        }
-        .backspace {
-            background: #d32f2f;
+        .key.backspace {
+            background: red;
         }
     </style>
 </head>
 <body>
-    <div id="preview"></div>
-    <div id="editor"></div>
+    <h2>Editor Matemático</h2>
+    <div id="editor-container">
+        <div id="visualizador"></div>
+        <textarea id="editor" oninput="atualizarVisualizador()"></textarea>
+    </div>
     <div class="keyboard">
         <div class="key" onclick="insertText('q')">q</div>
         <div class="key" onclick="insertText('w')">w</div>
@@ -87,53 +79,46 @@
         <div class="key" onclick="insertText('i')">i</div>
         <div class="key" onclick="insertText('o')">o</div>
         <div class="key" onclick="insertText('p')">p</div>
-        <div class="key" onclick="insertText('a')">a</div>
-        <div class="key" onclick="insertText('s')">s</div>
-        <div class="key" onclick="insertText('d')">d</div>
-        <div class="key" onclick="insertText('f')">f</div>
-        <div class="key" onclick="insertText('g')">g</div>
-        <div class="key" onclick="insertText('h')">h</div>
-        <div class="key" onclick="insertText('j')">j</div>
-        <div class="key" onclick="insertText('k')">k</div>
-        <div class="key" onclick="insertText('l')">l</div>
-        <div class="key" onclick="insertText('z')">z</div>
-        <div class="key" onclick="insertText('x')">x</div>
-        <div class="key" onclick="insertText('c')">c</div>
-        <div class="key" onclick="insertText('v')">v</div>
-        <div class="key" onclick="insertText('b')">b</div>
-        <div class="key" onclick="insertText('n')">n</div>
-        <div class="key" onclick="insertText('m')">m</div>
-        <div class="key space" onclick="insertText(' ')">␣</div>
         <div class="key" onclick="insertText('$')">$</div>
-        <div class="key enter" onclick="insertText('\n')">↵</div>
+        <div class="key special" onclick="insertText('\n')">↵</div>
         <div class="key backspace" onclick="backspace()">⌫</div>
-    </div><script>
-    const editor = document.getElementById("editor");
-    const preview = document.getElementById("preview");
+    </div>
+    <script>
+        function insertText(text) {
+            let editor = document.getElementById("editor");
+            let start = editor.selectionStart;
+            let end = editor.selectionEnd;
+            let value = editor.value;
+            editor.value = value.substring(0, start) + text + value.substring(end);
+            editor.selectionStart = editor.selectionEnd = start + text.length;
+            atualizarVisualizador();
+        }function backspace() {
+        let editor = document.getElementById("editor");
+        let start = editor.selectionStart;
+        let end = editor.selectionEnd;
+        let value = editor.value;
+        if (start > 0) {
+            editor.value = value.substring(0, start - 1) + value.substring(end);
+            editor.selectionStart = editor.selectionEnd = start - 1;
+        }
+        atualizarVisualizador();
+    }
     
-    function updatePreview() {
-        let text = editor.innerText;
-        text = text.replace(/\$(.*?)\$/g, (match, math) => {
-            return `<span style="display: inline-block;">${katex.renderToString(math, { throwOnError: false })}</span>`;
+    function atualizarVisualizador() {
+        let editor = document.getElementById("editor");
+        let visualizador = document.getElementById("visualizador");
+        let texto = editor.value.replace(/\$/g, "\\$"); // Escape do caractere $
+        visualizador.innerHTML = texto.split('\n').map(line => `<div>${line}</div>`).join('');
+        renderizarMatematica();
+    }
+    
+    function renderizarMatematica() {
+        let visualizador = document.getElementById("visualizador");
+        let regex = /\$(.*?)\$/g;
+        visualizador.innerHTML = visualizador.innerHTML.replace(regex, (match, expr) => {
+            return katex.renderToString(expr, { throwOnError: false });
         });
-        preview.innerHTML = text.replace(/\n/g, '<br>');
-        localStorage.setItem("editorContent", editor.innerText);
     }
-    
-    function insertText(text) {
-        editor.innerText += text;
-        updatePreview();
-    }
-    
-    function backspace() {
-        editor.innerText = editor.innerText.slice(0, -1);
-        updatePreview();
-    }
-    
-    window.onload = () => {
-        editor.innerText = localStorage.getItem("editorContent") || "";
-        updatePreview();
-    };
 </script>
 
 </body>
