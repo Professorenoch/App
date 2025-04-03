@@ -50,19 +50,22 @@
             margin: auto;
         }
         .key {
-            background: #333;
+            background: #444;
             color: white;
-            padding: 10px 15px;
-            margin: 5px;
-            border-radius: 5px;
+            padding: 8px 12px;
+            margin: 4px;
+            border-radius: 10px;
             cursor: pointer;
-            font-size: 20px;
+            font-size: 16px;
             text-align: center;
-            min-width: 30px;
+            min-width: 28px;
         }
         .space {
             flex-grow: 2;
             min-width: 100px;
+        }
+        .backspace {
+            background: #d32f2f;
         }
     </style>
 </head>
@@ -98,6 +101,7 @@
         <div class="key" onclick="insertText('m')">m</div>
         <div class="key space" onclick="insertText(' ')">␣</div>
         <div class="key" onclick="insertText('$')">$</div>
+        <div class="key backspace" onclick="backspace()">⌫</div>
     </div><script>
     const editor = document.getElementById("editor");
     const preview = document.getElementById("preview");
@@ -113,6 +117,11 @@
     
     function insertText(text) {
         editor.innerText += text;
+        updatePreview();
+    }
+    
+    function backspace() {
+        editor.innerText = editor.innerText.slice(0, -1);
         updatePreview();
     }
     
