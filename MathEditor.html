@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="pt-BR">
+<!DOCTYPE html><html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,111 +13,52 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 20px;
+            justify-content: center;
+            height: 100vh;
         }
-        #editor-container {
-            width: 100%;
-            max-width: 400px;
-            background: #222;
+        #output {
+            width: 90%;
+            min-height: 200px;
+            border: 1px solid white;
             padding: 10px;
-            border-radius: 10px;
-        }
-        #visualizador {
-            min-height: 150px;
-            background: black;
-            padding: 10px;
+            margin-bottom: 10px;
             white-space: pre-wrap;
-            text-align: left;
         }
-        textarea {
-            width: 100%;
-            height: 100px;
-            background: #333;
-            color: white;
-            border: none;
-            padding: 10px;
-            font-size: 16px;
-            outline: none;
-        }
-        .keyboard {
+        #keyboard {
             display: grid;
             grid-template-columns: repeat(10, 1fr);
             gap: 5px;
-            padding: 10px;
-            max-width: 400px;
+            width: 90%;
         }
         .key {
-            background: gray;
             padding: 10px;
+            background: #333;
             text-align: center;
             border-radius: 5px;
             cursor: pointer;
         }
-        .key.special {
-            background: blue;
-            color: white;
-        }
-        .key.backspace {
-            background: red;
-        }
     </style>
 </head>
 <body>
-    <h2>Editor Matemático</h2>
-    <div id="editor-container">
-        <div id="visualizador"></div>
-        <textarea id="editor" oninput="atualizarVisualizador()"></textarea>
-    </div>
-    <div class="keyboard">
-        <div class="key" onclick="insertText('q')">q</div>
-        <div class="key" onclick="insertText('w')">w</div>
-        <div class="key" onclick="insertText('e')">e</div>
-        <div class="key" onclick="insertText('r')">r</div>
-        <div class="key" onclick="insertText('t')">t</div>
-        <div class="key" onclick="insertText('y')">y</div>
-        <div class="key" onclick="insertText('u')">u</div>
-        <div class="key" onclick="insertText('i')">i</div>
-        <div class="key" onclick="insertText('o')">o</div>
-        <div class="key" onclick="insertText('p')">p</div>
-        <div class="key" onclick="insertText('$')">$</div>
-        <div class="key special" onclick="insertText('\n')">↵</div>
-        <div class="key backspace" onclick="backspace()">⌫</div>
-    </div>
+    <div id="output"></div>
+    <div id="keyboard"></div>
     <script>
-        function insertText(text) {
-            let editor = document.getElementById("editor");
-            let start = editor.selectionStart;
-            let end = editor.selectionEnd;
-            let value = editor.value;
-            editor.value = value.substring(0, start) + text + value.substring(end);
-            editor.selectionStart = editor.selectionEnd = start + text.length;
-            atualizarVisualizador();
-        }function backspace() {
-        let editor = document.getElementById("editor");
-        let start = editor.selectionStart;
-        let end = editor.selectionEnd;
-        let value = editor.value;
-        if (start > 0) {
-            editor.value = value.substring(0, start - 1) + value.substring(end);
-            editor.selectionStart = editor.selectionEnd = start - 1;
+        const output = document.getElementById("output");
+        const keyboard = document.getElementById("keyboard");
+        const keys = "qwertyuiopasdfghjklzxcvbnm$↵".split("");keys.forEach(key => {
+        const keyElement = document.createElement("div");
+        keyElement.classList.add("key");
+        keyElement.textContent = key;
+        keyElement.onclick = () => insertText(key);
+        keyboard.appendChild(keyElement);
+    });
+
+    function insertText(char) {
+        if (char === "↵") {
+            output.innerHTML += "<br>";
+        } else {
+            output.innerHTML += char;
         }
-        atualizarVisualizador();
-    }
-    
-    function atualizarVisualizador() {
-        let editor = document.getElementById("editor");
-        let visualizador = document.getElementById("visualizador");
-        let texto = editor.value.replace(/\$/g, "\\$"); // Escape do caractere $
-        visualizador.innerHTML = texto.split('\n').map(line => `<div>${line}</div>`).join('');
-        renderizarMatematica();
-    }
-    
-    function renderizarMatematica() {
-        let visualizador = document.getElementById("visualizador");
-        let regex = /\$(.*?)\$/g;
-        visualizador.innerHTML = visualizador.innerHTML.replace(regex, (match, expr) => {
-            return katex.renderToString(expr, { throwOnError: false });
-        });
     }
 </script>
 
