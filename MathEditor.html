@@ -12,7 +12,7 @@
             font-family: Arial, sans-serif;
             text-align: center;
         }
-        textarea {
+        #editor {
             width: 90%;
             height: 200px;
             background: black;
@@ -22,6 +22,8 @@
             border: none;
             outline: none;
             resize: none;
+            overflow-y: auto;
+            white-space: pre-wrap;
         }
         .keyboard {
             display: flex;
@@ -42,7 +44,7 @@
 </head>
 <body>
     <h1>Editor Matemático</h1>
-    <textarea id="editor" placeholder="Digite aqui..."></textarea>
+    <div id="editor" contenteditable="true" placeholder="Digite aqui..."></div>
     <div id="preview"></div>
     <div class="keyboard">
         <div class="key" onclick="insertText('x')">x</div>
@@ -60,22 +62,18 @@
     
     function updatePreview() {
         preview.innerHTML = '';
-        katex.render(editor.value, preview);
-        localStorage.setItem("editorContent", editor.value);
+        katex.render(editor.innerText, preview);
+        localStorage.setItem("editorContent", editor.innerText);
     }
     
     function insertText(text) {
-        const start = editor.selectionStart;
-        const end = editor.selectionEnd;
-        editor.value = editor.value.substring(0, start) + text + editor.value.substring(end);
-        editor.focus();
-        editor.selectionStart = editor.selectionEnd = start + text.length;
+        document.execCommand("insertText", false, text);
         updatePreview();
     }
     
     editor.addEventListener("input", updatePreview);
     window.onload = () => {
-        editor.value = localStorage.getItem("editorContent") || "";
+        editor.innerText = localStorage.getItem("editorContent") || "";
         updatePreview();
     };
 </script>
