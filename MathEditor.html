@@ -5,7 +5,132 @@
     <title>Editor Matemático</title>
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <style><!DOCTYPE html><html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor Matemático</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
     <style>
+        body {
+            background-color: #121212;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            justify-content: space-between;
+        }
+        #preview {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            padding: 20px;
+            min-height: 50vh;
+        }
+        #editor {
+            width: 90%;
+            height: 100px;
+            background: black;
+            color: white;
+            font-size: 20px;
+            padding: 10px;
+            border: none;
+            outline: none;
+            resize: none;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            margin-bottom: 10px;
+            user-select: none;
+            pointer-events: none;
+        }
+        .keyboard {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 10px;
+            max-width: 500px;
+            margin: auto;
+        }
+        .key {
+            background: #333;
+            color: white;
+            padding: 10px 15px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 20px;
+            text-align: center;
+            min-width: 30px;
+        }
+        .space {
+            flex-grow: 2;
+            min-width: 100px;
+        }
+    </style>
+</head>
+<body>
+    <div id="preview"></div>
+    <div id="editor"></div>
+    <div class="keyboard">
+        <div class="key" onclick="insertText('q')">q</div>
+        <div class="key" onclick="insertText('w')">w</div>
+        <div class="key" onclick="insertText('e')">e</div>
+        <div class="key" onclick="insertText('r')">r</div>
+        <div class="key" onclick="insertText('t')">t</div>
+        <div class="key" onclick="insertText('y')">y</div>
+        <div class="key" onclick="insertText('u')">u</div>
+        <div class="key" onclick="insertText('i')">i</div>
+        <div class="key" onclick="insertText('o')">o</div>
+        <div class="key" onclick="insertText('p')">p</div>
+        <div class="key" onclick="insertText('a')">a</div>
+        <div class="key" onclick="insertText('s')">s</div>
+        <div class="key" onclick="insertText('d')">d</div>
+        <div class="key" onclick="insertText('f')">f</div>
+        <div class="key" onclick="insertText('g')">g</div>
+        <div class="key" onclick="insertText('h')">h</div>
+        <div class="key" onclick="insertText('j')">j</div>
+        <div class="key" onclick="insertText('k')">k</div>
+        <div class="key" onclick="insertText('l')">l</div>
+        <div class="key" onclick="insertText('z')">z</div>
+        <div class="key" onclick="insertText('x')">x</div>
+        <div class="key" onclick="insertText('c')">c</div>
+        <div class="key" onclick="insertText('v')">v</div>
+        <div class="key" onclick="insertText('b')">b</div>
+        <div class="key" onclick="insertText('n')">n</div>
+        <div class="key" onclick="insertText('m')">m</div>
+        <div class="key space" onclick="insertText(' ')">␣</div>
+        <div class="key" onclick="insertText('$')">$</div>
+    </div><script>
+    const editor = document.getElementById("editor");
+    const preview = document.getElementById("preview");
+    
+    function updatePreview() {
+        let text = editor.innerText;
+        text = text.replace(/\$(.*?)\$/g, (match, math) => {
+            return katex.renderToString(math, { throwOnError: false });
+        });
+        preview.innerHTML = text;
+        localStorage.setItem("editorContent", editor.innerText);
+    }
+    
+    function insertText(text) {
+        editor.innerText += text;
+        updatePreview();
+    }
+    
+    window.onload = () => {
+        editor.innerText = localStorage.getItem("editorContent") || "";
+        updatePreview();
+    };
+</script>
+
+</body>
+</html>
         body {
             background-color: #121212;
             color: white;
