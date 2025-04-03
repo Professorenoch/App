@@ -24,6 +24,7 @@
             font-size: 24px;
             padding: 20px;
             min-height: 50vh;
+            white-space: pre-wrap;
         }
         #editor {
             width: 90%;
@@ -36,7 +37,7 @@
             outline: none;
             resize: none;
             overflow-y: auto;
-            white-space: pre-wrap;
+            white-space: nowrap;
             margin-bottom: 10px;
             user-select: none;
             pointer-events: none;
@@ -103,7 +104,7 @@
         <div class="key" onclick="insertText('m')">m</div>
         <div class="key space" onclick="insertText(' ')">␣</div>
         <div class="key" onclick="insertText('$')">$</div>
-        <div class="key enter" onclick="insertText('\n')">↵</div>
+        <div class="key enter" onclick="insertNewLine()">↵</div>
         <div class="key backspace" onclick="backspace()">⌫</div>
     </div><script>
     const editor = document.getElementById("editor");
@@ -121,6 +122,10 @@
     function insertText(text) {
         editor.innerText += text;
         updatePreview();
+    }
+    
+    function insertNewLine() {
+        preview.innerHTML += "<br>";
     }
     
     function backspace() {
