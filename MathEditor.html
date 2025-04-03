@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
+<!DOCTYPE html><html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,6 +15,7 @@
             flex-direction: column;
             height: 100vh;
             justify-content: space-between;
+            margin: 0;
         }
         #preview {
             flex-grow: 1;
@@ -46,21 +46,19 @@
         .keyboard {
             display: grid;
             grid-template-columns: repeat(10, 1fr);
-            gap: 5px;
-            padding: 10px;
-            width: 100%;
-            max-width: 100%;
-            margin: auto;
+            gap: 4px;
+            padding: 8px;
+            width: 100vw;
+            box-sizing: border-box;
         }
         .key {
             background: #444;
             color: white;
-            padding: 10px;
-            border-radius: 8px;
+            padding: 12px 0;
+            border-radius: 10px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 18px;
             text-align: center;
-            min-width: 28px;
         }
         .space {
             grid-column: span 5;
@@ -107,35 +105,34 @@
         <div class="key" onclick="insertText('$')">$</div>
         <div class="key enter" onclick="insertText('\n')">↵</div>
         <div class="key backspace" onclick="backspace()">⌫</div>
-    </div>
+    </div><script>
+    const editor = document.getElementById("editor");
+    const preview = document.getElementById("preview");
     
-    <script>
-        const editor = document.getElementById("editor");
-        const preview = document.getElementById("preview");
-        
-        function updatePreview() {
-            let text = editor.innerText;
-            text = text.replace(/\$(.*?)\$/g, (match, math) => {
-                return katex.renderToString(math, { throwOnError: false });
-            });
-            preview.innerHTML = text.replace(/\n/g, '<br>');
-            localStorage.setItem("editorContent", editor.innerText);
-        }
-        
-        function insertText(text) {
-            editor.innerText += text;
-            updatePreview();
-        }
-        
-        function backspace() {
-            editor.innerText = editor.innerText.slice(0, -1);
-            updatePreview();
-        }
-        
-        window.onload = () => {
-            editor.innerText = localStorage.getItem("editorContent") || "";
-            updatePreview();
-        };
-    </script>
+    function updatePreview() {
+        let text = editor.innerText;
+        text = text.replace(/\$(.*?)\$/g, (match, math) => {
+            return katex.renderToString(math, { throwOnError: false });
+        });
+        preview.innerHTML = text.replace(/\n/g, '<br>');
+        localStorage.setItem("editorContent", editor.innerText);
+    }
+    
+    function insertText(text) {
+        editor.innerText += text;
+        updatePreview();
+    }
+    
+    function backspace() {
+        editor.innerText = editor.innerText.slice(0, -1);
+        updatePreview();
+    }
+    
+    window.onload = () => {
+        editor.innerText = localStorage.getItem("editorContent") || "";
+        updatePreview();
+    };
+</script>
+
 </body>
 </html>
