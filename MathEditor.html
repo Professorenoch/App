@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="pt-BR">
+<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -37,7 +38,7 @@
             outline: none;
             resize: none;
             overflow-y: auto;
-            white-space: nowrap;
+            white-space: pre-wrap;
             margin-bottom: 10px;
             user-select: none;
             pointer-events: none;
@@ -104,40 +105,37 @@
         <div class="key" onclick="insertText('m')">m</div>
         <div class="key space" onclick="insertText(' ')">␣</div>
         <div class="key" onclick="insertText('$')">$</div>
-        <div class="key enter" onclick="insertNewLine()">↵</div>
+        <div class="key enter" onclick="insertText('\n')">↵</div>
         <div class="key backspace" onclick="backspace()">⌫</div>
-    </div><script>
-    const editor = document.getElementById("editor");
-    const preview = document.getElementById("preview");
+    </div>
     
-    function updatePreview() {
-        let text = editor.innerText;
-        text = text.replace(/\$(.*?)\$/g, (match, math) => {
-            return katex.renderToString(math, { throwOnError: false });
-        });
-        preview.innerHTML = text;
-        localStorage.setItem("editorContent", editor.innerText);
-    }
-    
-    function insertText(text) {
-        editor.innerText += text;
-        updatePreview();
-    }
-    
-    function insertNewLine() {
-        preview.innerHTML += "<br>";
-    }
-    
-    function backspace() {
-        editor.innerText = editor.innerText.slice(0, -1);
-        updatePreview();
-    }
-    
-    window.onload = () => {
-        editor.innerText = localStorage.getItem("editorContent") || "";
-        updatePreview();
-    };
-</script>
-
+    <script>
+        const editor = document.getElementById("editor");
+        const preview = document.getElementById("preview");
+        
+        function updatePreview() {
+            let text = editor.innerText;
+            text = text.replace(/\$(.*?)\$/g, (match, math) => {
+                return katex.renderToString(math, { throwOnError: false });
+            });
+            preview.innerHTML = text.replace(/\n/g, '<br>');
+            localStorage.setItem("editorContent", editor.innerText);
+        }
+        
+        function insertText(text) {
+            editor.innerText += text;
+            updatePreview();
+        }
+        
+        function backspace() {
+            editor.innerText = editor.innerText.slice(0, -1);
+            updatePreview();
+        }
+        
+        window.onload = () => {
+            editor.innerText = localStorage.getItem("editorContent") || "";
+            updatePreview();
+        };
+    </script>
 </body>
 </html>
