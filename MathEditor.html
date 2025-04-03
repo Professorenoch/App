@@ -1,65 +1,139 @@
-<!DOCTYPE html><html lang="pt-br">
+<!DOCTYPE html><html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editor Matemático</title>
-    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/katex.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.4/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
     <style>
         body {
-            background-color: black;
+            background-color: #121212;
             color: white;
             font-family: Arial, sans-serif;
+            text-align: center;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
             height: 100vh;
+            justify-content: space-between;
+            margin: 0;
         }
-        #output {
-            width: 90%;
-            min-height: 200px;
-            border: 1px solid white;
-            padding: 10px;
-            margin-bottom: 10px;
+        #preview {
+            flex-grow: 1;
+            display: flex;
+            align-items: flex-start;
+            justify-content: flex-start;
+            font-size: 24px;
+            padding: 20px;
+            min-height: 50vh;
             white-space: pre-wrap;
+            text-align: left;
         }
-        #keyboard {
+        #editor {
+            width: 90%;
+            height: 100px;
+            background: black;
+            color: white;
+            font-size: 20px;
+            padding: 10px;
+            border: none;
+            outline: none;
+            resize: none;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            margin-bottom: 10px;
+            user-select: none;
+            pointer-events: none;
+            text-align: left;
+        }
+        .keyboard {
             display: grid;
             grid-template-columns: repeat(10, 1fr);
-            gap: 5px;
-            width: 90%;
+            gap: 4px;
+            padding: 8px;
+            width: 100vw;
+            box-sizing: border-box;
         }
         .key {
-            padding: 10px;
-            background: #333;
-            text-align: center;
-            border-radius: 5px;
+            background: #444;
+            color: white;
+            padding: 12px 0;
+            border-radius: 10px;
             cursor: pointer;
+            font-size: 18px;
+            text-align: center;
+        }
+        .space {
+            grid-column: span 5;
+        }
+        .enter {
+            background: #1976D2;
+        }
+        .backspace {
+            background: #d32f2f;
         }
     </style>
 </head>
 <body>
-    <div id="output"></div>
-    <div id="keyboard"></div>
-    <script>
-        const output = document.getElementById("output");
-        const keyboard = document.getElementById("keyboard");
-        const keys = "qwertyuiopasdfghjklzxcvbnm$↵".split("");keys.forEach(key => {
-        const keyElement = document.createElement("div");
-        keyElement.classList.add("key");
-        keyElement.textContent = key;
-        keyElement.onclick = () => insertText(key);
-        keyboard.appendChild(keyElement);
-    });
-
-    function insertText(char) {
-        if (char === "↵") {
-            output.innerHTML += "<br>";
-        } else {
-            output.innerHTML += char;
-        }
+    <div id="preview"></div>
+    <div id="editor"></div>
+    <div class="keyboard">
+        <div class="key" onclick="insertText('q')">q</div>
+        <div class="key" onclick="insertText('w')">w</div>
+        <div class="key" onclick="insertText('e')">e</div>
+        <div class="key" onclick="insertText('r')">r</div>
+        <div class="key" onclick="insertText('t')">t</div>
+        <div class="key" onclick="insertText('y')">y</div>
+        <div class="key" onclick="insertText('u')">u</div>
+        <div class="key" onclick="insertText('i')">i</div>
+        <div class="key" onclick="insertText('o')">o</div>
+        <div class="key" onclick="insertText('p')">p</div>
+        <div class="key" onclick="insertText('a')">a</div>
+        <div class="key" onclick="insertText('s')">s</div>
+        <div class="key" onclick="insertText('d')">d</div>
+        <div class="key" onclick="insertText('f')">f</div>
+        <div class="key" onclick="insertText('g')">g</div>
+        <div class="key" onclick="insertText('h')">h</div>
+        <div class="key" onclick="insertText('j')">j</div>
+        <div class="key" onclick="insertText('k')">k</div>
+        <div class="key" onclick="insertText('l')">l</div>
+        <div class="key" onclick="insertText('z')">z</div>
+        <div class="key" onclick="insertText('x')">x</div>
+        <div class="key" onclick="insertText('c')">c</div>
+        <div class="key" onclick="insertText('v')">v</div>
+        <div class="key" onclick="insertText('b')">b</div>
+        <div class="key" onclick="insertText('n')">n</div>
+        <div class="key" onclick="insertText('m')">m</div>
+        <div class="key space" onclick="insertText(' ')">␣</div>
+        <div class="key" onclick="insertText('$')">$</div>
+        <div class="key enter" onclick="insertText('\n')">↵</div>
+        <div class="key backspace" onclick="backspace()">⌫</div>
+    </div><script>
+    const editor = document.getElementById("editor");
+    const preview = document.getElementById("preview");
+    
+    function updatePreview() {
+        let text = editor.innerText;
+        text = text.replace(/\$(.*?)\$/g, (match, math) => {
+            return `<span style="display: inline-block;">${katex.renderToString(math, { throwOnError: false })}</span>`;
+        });
+        preview.innerHTML = text.replace(/\n/g, '<br>');
+        localStorage.setItem("editorContent", editor.innerText);
     }
+    
+    function insertText(text) {
+        editor.innerText += text;
+        updatePreview();
+    }
+    
+    function backspace() {
+        editor.innerText = editor.innerText.slice(0, -1);
+        updatePreview();
+    }
+    
+    window.onload = () => {
+        editor.innerText = localStorage.getItem("editorContent") || "";
+        updatePreview();
+    };
 </script>
 
 </body>
