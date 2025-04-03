@@ -38,6 +38,8 @@
             overflow-y: auto;
             white-space: pre-wrap;
             margin-bottom: 10px;
+            user-select: none;
+            pointer-events: none;
         }
         .keyboard {
             display: flex;
@@ -58,7 +60,7 @@
 </head>
 <body>
     <div id="preview"></div>
-    <div id="editor" contenteditable="true" placeholder="Digite aqui..."></div>
+    <div id="editor"></div>
     <div class="keyboard">
         <div class="key" onclick="insertText('x')">x</div>
         <div class="key" onclick="insertText('y')">y</div>
@@ -80,11 +82,10 @@
     }
     
     function insertText(text) {
-        document.execCommand("insertText", false, text);
+        editor.innerText += text;
         updatePreview();
     }
     
-    editor.addEventListener("input", updatePreview);
     window.onload = () => {
         editor.innerText = localStorage.getItem("editorContent") || "";
         updatePreview();
