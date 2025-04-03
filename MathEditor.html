@@ -46,13 +46,14 @@
             grid-template-columns: repeat(10, 1fr);
             gap: 5px;
             padding: 10px;
-            max-width: 500px;
+            width: 100%;
+            max-width: 100%;
             margin: auto;
         }
         .key {
             background: #444;
             color: white;
-            padding: 8px;
+            padding: 10px;
             border-radius: 8px;
             cursor: pointer;
             font-size: 16px;
@@ -61,6 +62,9 @@
         }
         .space {
             grid-column: span 5;
+        }
+        .enter {
+            background: #1976D2;
         }
         .backspace {
             background: #d32f2f;
@@ -99,6 +103,7 @@
         <div class="key" onclick="insertText('m')">m</div>
         <div class="key space" onclick="insertText(' ')">␣</div>
         <div class="key" onclick="insertText('$')">$</div>
+        <div class="key enter" onclick="insertText('\n')">↵</div>
         <div class="key backspace" onclick="backspace()">⌫</div>
     </div><script>
     const editor = document.getElementById("editor");
