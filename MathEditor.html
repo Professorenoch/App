@@ -88,19 +88,22 @@
         <div class="key" onclick="insertText('x')">x</div>
         <div class="key" onclick="insertText('y')">y</div>
         <div class="key" onclick="insertText('z')">z</div>
-        <div class="key" onclick="insertText('\\int')">∫</div>
-        <div class="key" onclick="insertText('\\frac{}{}')">a/b</div>
-        <div class="key" onclick="insertText('\\sqrt{}')">√</div>
-        <div class="key" onclick="insertText('\\sum')">∑</div>
-        <div class="key" onclick="insertText('\\lim')">lim</div>
-        <div class="key" onclick="insertText('\\pi')">π</div>
+        <div class="key" onclick="insertText('$\\int$')">∫</div>
+        <div class="key" onclick="insertText('$\\frac{}{}$')">a/b</div>
+        <div class="key" onclick="insertText('$\\sqrt{}$')">√</div>
+        <div class="key" onclick="insertText('$\\sum$')">∑</div>
+        <div class="key" onclick="insertText('$\\lim$')">lim</div>
+        <div class="key" onclick="insertText('$\\pi$')">π</div>
     </div><script>
     const editor = document.getElementById("editor");
     const preview = document.getElementById("preview");
     
     function updatePreview() {
-        preview.innerHTML = '';
-        katex.render(editor.innerText, preview);
+        let text = editor.innerText;
+        text = text.replace(/\$(.*?)\$/g, (match, math) => {
+            return katex.renderToString(math, { throwOnError: false });
+        });
+        preview.innerHTML = text;
         localStorage.setItem("editorContent", editor.innerText);
     }
     
